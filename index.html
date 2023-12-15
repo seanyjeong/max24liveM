@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24맥스정시실시간</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Additional styles if needed */
+        #search-results th {
+            font-size: 14px;
+            text-align: center;
+            padding: 0;  /* 패딩 제거 */
+        }
+        #search-results td {
+            font-size: 11px;
+            text-align: center;
+            padding: 0;  /* 패딩 제거 */
+        }
+        #search-results table {
+            width: 100%;  /* 표의 가로 크기를 100%로 설정 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<h1 style="font-size: 25pt; text-align: center;">맥스체대입시 24정시 실시간 순위</h1>
+    <div class="container mx-auto p-8">
+        <div class="flex flex-col space-y-4">
+            <div class="flex space-x-4 items-end">
+                <div class="w-1/4">
+                    <label for="military-branch" class="block text-sm font-medium text-gray-700">군</label>
+                    <select id="military-branch" name="military-branch" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option selected="selected" value="">선택하세요</option>
+                        <option>가</option>
+                        <option>나</option>
+                        <option>다</option>
+                    </select>
+                </div>
+                <div class="w-1/4">
+                    <label for="university-name" class="block text-sm font-medium text-gray-700">대학명</label>
+                    <select id="university-name" name="university-name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <!-- 대학명 드롭다운 메뉴 -->
+                    </select>
+                </div>
+                <div class="w-1/4">
+                    <label for="department-name" class="block text-sm font-medium text-gray-700">학과명</label>
+                    <select id="department-name" name="department-name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <!-- 학과명 드롭다운 메뉴 -->
+                    </select>
+                </div>
+                <div class="w-1/4">
+                    <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        검색
+                    </button>
+                </div>
+            </div>
+            <div id="search-results" class="mt-4"></div>  <!-- 검색 결과를 표시할 div 요소 -->
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('#military-branch').addEventListener('change', function(event) {
+            var militaryBranch = event.target.value;
+
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var universitySelect = document.querySelector('#university-name');
+                    
+                    // 기존의 대학명 옵션을 모두 제거합니다.
+                    while (universitySelect.firstChild) {
+                        universitySelect.removeChild(universitySelect.firstChild);
+                    }
+
+                    // 새로운 대학명 옵션을 추가합니다.
+                    data.forEach(function(university) {
+                        var option = document.createElement('option');
+                        option.text = university;
+                        universitySelect.add(option);
+                    });
+                });
+        });
+
+        document.querySelector('#university-name').addEventListener('change', function(event) {
+            var militaryBranch = document.querySelector('#military-branch').value;
+            var universityName = event.target.value;
+
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch) + '&university-name=' + encodeURIComponent(universityName))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var departmentSelect = document.querySelector('#department-name');
+                    
+                    // 기존의 학과명 옵션을 모두 제거합니다.
+                    while (departmentSelect.firstChild) {
+                        departmentSelect.removeChild(departmentSelect.firstChild);
+                    }
+
+                    // 새로운 학과명 옵션을 추가합니다.
+                    data.forEach(function(department) {
+                        var option = document.createElement('option');
+                        option.text = department;
+                        departmentSelect.add(option);
+                    });
+                });
+        });
+
+        document.querySelector('button[type="submit"]').addEventListener('click', function(event) {
+            event.preventDefault();  // 폼 제출을 막습니다.
+
+            var militaryBranch = document.querySelector('#military-branch').value;
+            var universityName = document.querySelector('#university-name').value;
+            var departmentName = document.querySelector('#department-name').value;
+
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch) + '&university-name=' + encodeURIComponent(universityName) + '&department-name=' + encodeURIComponent(departmentName))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var searchResults = document.querySelector('#search-results');
+
+                    // 검색 결과를 초기화합니다.
+                    while (searchResults.firstChild) {
+                        searchResults.removeChild(searchResults.firstChild);
+                    }
+
+                    // 검색 결과를 웹 페이지에 표시합니다.
+                    var table = document.createElement('table');
+
+                    // 레이블 행을 추가합니다.
+                    var labels = ["순위", "지점", "학교", "학년", "성별", "이름", "수능", "내신", "실기", "총점", "최초결과", "최종결과"];
+                    var thead = document.createElement('thead');
+                    var tr = document.createElement('tr');
+                    labels.forEach(function(label) {
+                        var th = document.createElement('th');
+                        th.textContent = label;
+                        tr.appendChild(th);
+                    });
+                    thead.appendChild(tr);
+                    table.appendChild(thead);
+
+                    // 데이터 행을 추가합니다.
+                    var tbody = document.createElement('tbody');
+                    data.forEach(function(rowData, index) {
+                        var tr = document.createElement('tr');
+                        // 순위를 추가합니다.
+                        var rank = document.createElement('td');
+                        rank.textContent = index + 1;
+                        tr.appendChild(rank);
+                        // 나머지 데이터를 추가합니다.
+                        rowData.forEach(function(cellData) {
+                            var td = document.createElement('td');
+                            td.textContent = cellData;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+
+                    searchResults.appendChild(table);
+                });
+        });
+    </script>
+</body>
+</html>
