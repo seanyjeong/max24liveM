@@ -23,7 +23,9 @@
     </style>
 </head>
 <body class="bg-gray-50">
-<h1 style="font-size: 25pt; text-align: center;">맥스체대입시 24정시 실시간 순위</h1>
+    <div style="text-align: center;">
+        <img src="https://raw.githubusercontent.com/seanyjeong/max24liveM/f0d1ae6f73195b2d0295a9a17c82d07d0d6c9a3f/24sil.png" style="width: 100%;">
+    </div>
     <div class="container mx-auto p-8">
         <div class="flex flex-col space-y-4">
             <div class="flex space-x-4 items-end">
@@ -131,7 +133,7 @@
                     var table = document.createElement('table');
 
                     // 레이블 행을 추가합니다.
-                    var labels = ["순위", "지점", "학교", "학년", "성별", "이름", "수능", "내신", "실기", "총점", "최초결과", "최종결과"];
+                    var labels = ["순위", "지점", "학교", "학년", "성별", "이름", "수능", "내신", "실기", "총점"];
                     var thead = document.createElement('thead');
                     var tr = document.createElement('tr');
                     labels.forEach(function(label) {
@@ -150,6 +152,11 @@
                         var rank = document.createElement('td');
                         rank.textContent = index + 1;
                         tr.appendChild(rank);
+
+                        // 한 칸 띄우기 위해 빈 셀을 추가합니다.
+                        var emptyCell = document.createElement('td');
+                        tr.appendChild(emptyCell);
+
                         // 나머지 데이터를 추가합니다.
                         rowData.forEach(function(cellData) {
                             var td = document.createElement('td');
