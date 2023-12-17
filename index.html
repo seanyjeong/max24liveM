@@ -29,21 +29,54 @@
             visibility: hidden;
             opacity: 0;
             transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+            background-color: grey;  /* 배경색을 흰색으로 설정 */
+            border: 1px solid black;  /* 테두리 추가 */
+            padding: 20px;  /* 패딩 추가 */
+            width: 300px;  /* 너비 설정 */
+            height: 200px;  /* 높이 설정 */
+            z-index: 20;  /* 백드롭보다 높은 z-index */
         }
         .modal.visible {
             visibility: visible;
             opacity: 1;
             transition-delay: 0s;
         }
+        .modal input, .modal button {
+            border: 1px solid black;  /* 검정색 테두리 추가 */
+            margin-bottom: 20px;  /* 아래쪽 여백 추가 */
+            width: 100%;  /* 너비를 100%로 설정 */
+        }
+        .modal button {
+            display: block;  /* 블록 요소로 설정 */
+            margin-left: auto;  /* 왼쪽 여백을 자동으로 설정 */
+            margin-right: auto;  /* 오른쪽 여백을 자동으로 설정 */
+        }
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);  /* 반투명한 검정색 배경 */
+            z-index: 10;  /* 모달창보다 낮은 z-index */
+            display: none;  /* 기본적으로 숨김 */
+        }
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- 백드롭 -->
+    <div id="backdrop" class="backdrop"></div>
+
     <!-- 로그인 모달창 -->
     <div id="login-modal" class="modal">
-        <label for="username">ID:</label>
-        <input type="text" id="username" name="username">
-        <label for="password">PW:</label>
-        <input type="password" id="password" name="password">
+        <div>
+            <label for="username">ID:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div>
+            <label for="password">PW:</label>
+            <input type="password" id="password" name="password">
+        </div>
         <button id="login-button">로그인</button>
     </div>
     <div style="text-align: center;">
@@ -80,32 +113,36 @@
             <div id="search-results" class="mt-4"></div>  <!-- 검색 결과를 표시할 div 요소 -->
         </div>
     </div>
-
     <script>
-        // 로그인 모달창을 표시합니다.
-        document.getElementById('login-modal').classList.add('visible');
 
-        document.getElementById('login-button').addEventListener('click', function() {
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
+// 로그인 모달창을 표시합니다.
+document.getElementById('login-modal').classList.add('visible');
+document.getElementById('backdrop').style.display = 'block';  // 백드롭 표시
 
-            // 로그인 정보를 서버로 전송합니다.
-            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password))
-                .then(function(response) {
-                    return response.text();
-                })
-                .then(function(data) {
-                    if (data === 'true') {
-                        // 로그인 성공
-                        document.getElementById('login-modal').classList.remove('visible');
-                    } else {
-                        // 로그인 실패
-                        alert('로그인 실패. 다시 시도해주세요.');
-                    }
-                });
+document.getElementById('login-button').addEventListener('click', function() {
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+
+    // 로그인 정보를 서버로 전송합니다.
+    fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password))
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(data) {
+            if (data === 'true') {
+                // 로그인 성공
+                document.getElementById('login-modal').classList.remove('visible');
+                document.getElementById('backdrop').style.display = 'none';  // 백드롭 숨김
+            } else {
+                // 로그인 실패
+                alert('로그인 실패. 다시 시도해주세요.');
+            }
+        }).catch(function(error) {
+            console.error('Error:', error);
         });
+});
 
-    <script>
+
         document.querySelector('#military-branch').addEventListener('change', function(event) {
             var militaryBranch = event.target.value;
 
@@ -127,6 +164,8 @@
                         option.text = university;
                         universitySelect.add(option);
                     });
+                }).catch(function(error) {
+                    console.error('Error:', error);
                 });
         });
 
@@ -152,6 +191,8 @@
                         option.text = department;
                         departmentSelect.add(option);
                     });
+                }).catch(function(error) {
+                    console.error('Error:', error);
                 });
         });
 
