@@ -20,9 +20,32 @@
         #search-results table {
             width: 100%;  /* 표의 가로 크기를 100%로 설정 */
         }
+        /* 로그인 모달창 스타일 */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+        }
+        .modal.visible {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- 로그인 모달창 -->
+    <div id="login-modal" class="modal">
+        <label for="username">ID:</label>
+        <input type="text" id="username" name="username">
+        <label for="password">PW:</label>
+        <input type="password" id="password" name="password">
+        <button id="login-button">로그인</button>
+    </div>
     <div style="text-align: center;">
         <img src="https://raw.githubusercontent.com/seanyjeong/max24liveM/main/max24.png" style="width: 100%;">
     </div>
@@ -49,14 +72,38 @@
                     <!-- 학과명 드롭다운 메뉴 -->
                 </select>
             </div>
-<div class="w-full flex justify-center">
-    <button type="submit" class="w-1/2 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-        검색
-    </button>
-</div>
+            <div class="w-full flex justify-center">
+                <button type="submit" class="w-1/2 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    검색
+                </button>
+            </div>
             <div id="search-results" class="mt-4"></div>  <!-- 검색 결과를 표시할 div 요소 -->
         </div>
     </div>
+
+    <script>
+        // 로그인 모달창을 표시합니다.
+        document.getElementById('login-modal').classList.add('visible');
+
+        document.getElementById('login-button').addEventListener('click', function() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // 로그인 정보를 서버로 전송합니다.
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password))
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(data) {
+                    if (data === 'true') {
+                        // 로그인 성공
+                        document.getElementById('login-modal').classList.remove('visible');
+                    } else {
+                        // 로그인 실패
+                        alert('로그인 실패. 다시 시도해주세요.');
+                    }
+                });
+        });
 
     <script>
         document.querySelector('#military-branch').addEventListener('change', function(event) {
