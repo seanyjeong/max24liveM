@@ -12,7 +12,8 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24맥스정시실시간</title>
+    <title>맥스 라이브</title>
+<link rel="icon" href="https://raw.githubusercontent.com/seanyjeong/max24liveM/93ec4ba7071d2ef570b78e8cb1d5915eff580523/max.gif">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Additional styles if needed */
@@ -105,7 +106,8 @@
             <div class="w-full">
                 <label for="university-name" class="block text-sm font-medium text-gray-700">대학명</label>
                 <select id="university-name" name="university-name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <!-- 대학명 드롭다운 메뉴 -->
+                    
+<!-- 대학명 드롭다운 메뉴 -->
                 </select>
             </div>
             <div class="w-full">
@@ -152,31 +154,37 @@ document.getElementById('login-button').addEventListener('click', function() {
 });
 
 
-        document.querySelector('#military-branch').addEventListener('change', function(event) {
-            var militaryBranch = event.target.value;
+document.querySelector('#military-branch').addEventListener('change', function(event) {
+    var militaryBranch = event.target.value;
 
-            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch))
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    var universitySelect = document.querySelector('#university-name');
-                    
-                    // 기존의 대학명 옵션을 모두 제거합니다.
-                    while (universitySelect.firstChild) {
-                        universitySelect.removeChild(universitySelect.firstChild);
-                    }
+    fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch))
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var universitySelect = document.querySelector('#university-name');
+            
+            // 기존의 대학명 옵션을 모두 제거합니다.
+            while (universitySelect.firstChild) {
+                universitySelect.removeChild(universitySelect.firstChild);
+            }
 
-                    // 새로운 대학명 옵션을 추가합니다.
-                    data.forEach(function(university) {
-                        var option = document.createElement('option');
-                        option.text = university;
-                        universitySelect.add(option);
-                    });
-                }).catch(function(error) {
-                    console.error('Error:', error);
-                });
+            // "선택하세요" 옵션을 추가합니다.
+            var defaultOption = document.createElement('option');
+            defaultOption.text = "선택하세요";
+            universitySelect.add(defaultOption);
+
+            // 새로운 대학명 옵션을 추가합니다.
+            data.forEach(function(university) {
+                var option = document.createElement('option');
+                option.text = university;
+                universitySelect.add(option);
+            });
+        }).catch(function(error) {
+            console.error('Error:', error);
         });
+});
+
 
         document.querySelector('#university-name').addEventListener('change', function(event) {
             var militaryBranch = document.querySelector('#military-branch').value;
