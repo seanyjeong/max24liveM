@@ -1,250 +1,278 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>일맥 대학관리</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VW7R6BVRXZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VW7R6BVRXZ');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맥스 라이브</title>
+<link rel="icon" href="https://raw.githubusercontent.com/seanyjeong/max24liveM/93ec4ba7071d2ef570b78e8cb1d5915eff580523/max.gif">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* body 스타일 */
-        body {
-            margin: 0;
-            padding: 0;
+        /* Additional styles if needed */
+        #search-results th {
+            font-size: 14px;
+            text-align: center;
+            padding: 0;  /* 패딩 제거 */
         }
-
-        /* 모달창 스타일 */
+        #search-results td {
+            font-size: 11px;
+            text-align: center;
+            padding: 0;  /* 패딩 제거 */
+        }
+        #search-results table {
+            width: 100%;  /* 표의 가로 크기를 100%로 설정 */
+        }
+        /* 로그인 모달창 스타일 */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            padding-top: 100px; 
-            left: 0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+            background-color: #808080;  /* 배경색을 흰색으로 설정 */
+            border: 1px solid black;  /* 테두리 추가 */
+            padding: 20px;  /* 패딩 추가 */
+            width: 300px;  /* 너비 설정 */
+            height: 200px;  /* 높이 설정 */
+            z-index: 20;  /* 백드롭보다 높은 z-index */
+        }
+        .modal.visible {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+        }
+        .modal input, .modal button {
+            border: 1px solid black;  /* 검정색 테두리 추가 */
+            margin-bottom: 20px;  /* 아래쪽 여백 추가 */
+            width: 100%;  /* 너비를 100%로 설정 */
+        }
+        .modal button {
+            display: block;  /* 블록 요소로 설정 */
+            margin-left: auto;  /* 왼쪽 여백을 자동으로 설정 */
+            margin-right: auto;  /* 오른쪽 여백을 자동으로 설정 */
+        }
+        .backdrop {
+            position: fixed;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgb(0,0,0); 
-            background-color: rgba(0,0,0,0.4); 
-        }
-
-        /* 모달창 내용 스타일 */
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        /* 이미지 스타일 */
-        .responsive {
+            left: 0;
             width: 100%;
-            height: auto;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);  /* 반투명한 검정색 배경 */
+            z-index: 10;  /* 모달창보다 낮은 z-index */
+            display: none;  /* 기본적으로 숨김 */
         }
-
-/* 가군, 나군, 다군 섹션 스타일 */
-#가군-실기종목, #나군-실기종목, #다군-실기종목 {
-    display: flex; /* 변경된 코드 */
-    justify-content: center; /* 추가된 코드 */
-    font-size: 1.25em;
-    font-weight: bold;
-    margin-right: 1em;
-    width: 100%; /* 섹션의 너비를 100%로 설정 */
-    overflow: auto; /* 추가된 코드 */
-}
-
-/* 모바일 화면에서의 스타일 */
-@media screen and (max-width: 600px) {
-    /* 여기에 모바일 화면에서 적용할 스타일을 추가하세요. */
-    #가군-실기종목, #나군-실기종목, #다군-실기종목 {
-        width: 100%; /* 섹션의 너비를 100%로 설정 */
-    }
-}
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- 백드롭 -->
+    <div id="backdrop" class="backdrop"></div>
+
+    <!-- 로그인 모달창 -->
+    <div id="login-modal" class="modal">
+        <div>
+            <label for="username">ID:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div>
+            <label for="password">PW:</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <button id="login-button">로그인</button>
+    </div>
+    <div style="text-align: center;">
+        <img src="https://raw.githubusercontent.com/seanyjeong/max24liveM/main/max24.png" style="width: 100%;">
+    </div>
+    <div class="container mx-auto p-8">
+        <div class="flex flex-col space-y-4">
+            <div class="w-full">
+                <label for="military-branch" class="block text-sm font-medium text-gray-700">군</label>
+                <select id="military-branch" name="military-branch" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option selected="selected" value="">선택하세요</option>
+                    <option>가</option>
+                    <option>나</option>
+                    <option>다</option>
+                </select>
+            </div>
+            <div class="w-full">
+                <label for="university-name" class="block text-sm font-medium text-gray-700">대학명</label>
+                <select id="university-name" name="university-name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    
+<!-- 대학명 드롭다운 메뉴 -->
+                </select>
+            </div>
+            <div class="w-full">
+                <label for="department-name" class="block text-sm font-medium text-gray-700">학과명</label>
+                <select id="department-name" name="department-name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <!-- 학과명 드롭다운 메뉴 -->
+                </select>
+            </div>
+            <div class="w-full flex justify-center">
+                <button type="submit" class="w-1/2 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    검색
+                </button>
+            </div>
+            <div id="search-results" class="mt-4"></div>  <!-- 검색 결과를 표시할 div 요소 -->
+        </div>
+    </div>
     <script>
-        $(document).ready(function(){
-            $("#loginModal").show();
 
-            $("#submitBtn").click(function(){
-                var name = $("#name").val();
-                var code = $("#code").val();
+// 로그인 모달창을 표시합니다.
+document.getElementById('login-modal').classList.add('visible');
+document.getElementById('backdrop').style.display = 'block';  // 백드롭 표시
 
-                $.ajax({
-                    url: "https://script.google.com/macros/s/AKfycbyvIvMNE99a9dozw1oPZBo9UE8mLmD_5r5tlWpgQtLRfzxWcTjTwm9FqJkxVe_SaEMN/exec",
-                    type: "post",
-                    data: {name: name, code: code},
-                    success: function(response) {
-                        if(response != "failure") {
-                            var data = JSON.parse(response);
-                            console.log(data);
-                            $("#loginModal").hide();
-                            $("#results").show();
-                            $("#username").text(data.name + " 학생의 대학정보"); // 사용자 이름 설정
+document.getElementById('login-button').addEventListener('click', function() {
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
 
-
-                            var labels = ["대학명", "학과명", "수능점수", "내신점수"];
-                            var groups = ["가군", "나군", "다군"];
-                            for (var i = 0; i < groups.length; i++) {
-var totalScore = 0;
-for (var j = 0; j < labels.length; j++) {
-    var value = data[groups[i]][labels[j]];
-    $("#" + groups[i] + "-" + labels[j]).text(value);
-    var score = parseFloat(value);
-    if (!isNaN(score)) {
-        totalScore += score;
-    }
-}
-$("#" + groups[i] + "-총점").text(totalScore); // 총점 계산 및 표시
-var 실기종목들 = data[groups[i]]["실기종목"].split(", "); // 실기 종목들 찾기
-var 실기종목Container = $("#" + groups[i] + "-실기종목");
-실기종목Container.empty(); // 기존의 실기 종목과 입력 칸 제거
-
-var table = $('<table>'); // 새로운 테이블 생성
-var row1 = $('<tr>'); // 첫 번째 행 생성
-var row2 = $('<tr>'); // 두 번째 행 생성
-
-실기종목들.forEach(function(실기종목) {
-    if (실기종목.trim() !== "") { // 실기 종목이 비어 있지 않은 경우에만 추가
-        row1.append('<td style="color: red;">' + 실기종목 + '</td>'); // 실기 종목 추가, 빨간색으로 표시
-        row2.append('<td><input type="text"></td>'); // 입력 칸 추가
-    }
+    // 로그인 정보를 서버로 전송합니다.
+    fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password))
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(data) {
+            if (data === 'true') {
+                // 로그인 성공
+                document.getElementById('login-modal').classList.remove('visible');
+                document.getElementById('backdrop').style.display = 'none';  // 백드롭 숨김
+            } else {
+                // 로그인 실패
+                alert('로그인 실패. 다시 시도해주세요.');
+            }
+        }).catch(function(error) {
+            console.error('Error:', error);
+        });
 });
 
-table.append(row1); // 첫 번째 행을 테이블에 추가
-table.append(row2); // 두 번째 행을 테이블에 추가
-실기종목Container.append(table); // 테이블을 실기종목Container에 추가
 
-                            }
-                        } else {
-                            alert("로그인에 실패했습니다. 이름과 코드를 확인해주세요.");
-                        }
-                    }
-                });
+document.querySelector('#military-branch').addEventListener('change', function(event) {
+    var militaryBranch = event.target.value;
+
+    fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch))
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var universitySelect = document.querySelector('#university-name');
+            
+            // 기존의 대학명 옵션을 모두 제거합니다.
+            while (universitySelect.firstChild) {
+                universitySelect.removeChild(universitySelect.firstChild);
+            }
+
+            // "선택하세요" 옵션을 추가합니다.
+            var defaultOption = document.createElement('option');
+            defaultOption.text = "선택하세요";
+            universitySelect.add(defaultOption);
+
+            // 새로운 대학명 옵션을 추가합니다.
+            data.forEach(function(university) {
+                var option = document.createElement('option');
+                option.text = university;
+                universitySelect.add(option);
             });
+        }).catch(function(error) {
+            console.error('Error:', error);
+        });
+});
+
+
+        document.querySelector('#university-name').addEventListener('change', function(event) {
+            var militaryBranch = document.querySelector('#military-branch').value;
+            var universityName = event.target.value;
+
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch) + '&university-name=' + encodeURIComponent(universityName))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var departmentSelect = document.querySelector('#department-name');
+                    
+                    // 기존의 학과명 옵션을 모두 제거합니다.
+                    while (departmentSelect.firstChild) {
+                        departmentSelect.removeChild(departmentSelect.firstChild);
+                    }
+
+                    // 새로운 학과명 옵션을 추가합니다.
+                    data.forEach(function(department) {
+                        var option = document.createElement('option');
+                        option.text = department;
+                        departmentSelect.add(option);
+                    });
+                }).catch(function(error) {
+                    console.error('Error:', error);
+                });
+        });
+
+        document.querySelector('button[type="submit"]').addEventListener('click', function(event) {
+            event.preventDefault();  // 폼 제출을 막습니다.
+
+            var militaryBranch = document.querySelector('#military-branch').value;
+            var universityName = document.querySelector('#university-name').value;
+            var departmentName = document.querySelector('#department-name').value;
+
+            fetch('https://script.google.com/macros/s/AKfycbx_wlnyYXKQgIGQb-HzTakPYpWH4yrw9-m_fX76WISw5Ew_sPg51JIpzq2vLMnekFMGhQ/exec' + '?military-branch=' + encodeURIComponent(militaryBranch) + '&university-name=' + encodeURIComponent(universityName) + '&department-name=' + encodeURIComponent(departmentName))
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var searchResults = document.querySelector('#search-results');
+
+                    // 검색 결과를 초기화합니다.
+                    while (searchResults.firstChild) {
+                        searchResults.removeChild(searchResults.firstChild);
+                    }
+
+                    // 검색 결과를 웹 페이지에 표시합니다.
+                    var table = document.createElement('table');
+
+                    // 레이블 행을 추가합니다.
+                    var labels = ["순위", "지점", "학년", "성별", "이름", "수능", "내신", "실기", "총점"];
+                    var thead = document.createElement('thead');
+                    var tr = document.createElement('tr');
+                    labels.forEach(function(label) {
+                        var th = document.createElement('th');
+                        th.textContent = label;
+                        tr.appendChild(th);
+                    });
+                    thead.appendChild(tr);
+                    table.appendChild(thead);
+
+                    // 데이터 행을 추가합니다.
+                    var tbody = document.createElement('tbody');
+                    data.forEach(function(rowData, index) {
+                        var tr = document.createElement('tr');
+                        // 순위를 추가합니다.
+                        var rank = document.createElement('td');
+                        rank.textContent = index + 1;
+                        tr.appendChild(rank);
+
+                        // 나머지 데이터를 추가합니다.
+                        rowData.forEach(function(cellData) {
+                            var td = document.createElement('td');
+                            td.textContent = cellData;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+
+                    searchResults.appendChild(table);
+                });
         });
     </script>
-</head>
-<body>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span onclick="$('#loginModal').hide();">&times;</span>
-            <label for="name">이름:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="code">코드:</label><br>
-            <input type="text" id="code" name="code"><br>
-            <button id="submitBtn">로그인</button>
-        </div>
-    </div>
-    </script>
-</head>
-<body>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span onclick="$('#loginModal').hide();">&times;</span>
-            <label for="name">이름:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="code">코드:</label><br>
-            <input type="text" id="code" name="code"><br>
-            <button id="submitBtn">로그인</button>
-        </div>
-    </div>
-    <div id="results" style="display:none;">
-        <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
-            <h2 id="username" style="text-align:center;"></h2> <!-- 사용자 이름을 표시하는 요소 -->
-            <h3 style="text-align:center;">!매일 실기입력해라!</h3> <!-- 제목 추가 -->
-        <h2 style="text-align:center;">가군</h2>
-        <div style="text-align: center;">
-            <span id="가군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-            <span id="가군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-        </div>
-        <div style="display: flex; justify-content: space-around;">
-            <div>
-                <p style="text-align:center;"><strong>수능</strong></p>
-                <p id="가군-수능점수" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>내신</strong></p>
-                <p id="가군-내신점수" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>실기</strong></p>
-                <p id="가군-실기점수" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>총점</strong></p>
-                <p id="가군-총점" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>합격가능성</strong></p>
-                <p id="가군-합격가능성" style="text-align:center;"></p>
-            </div>
-
-        </div>
-<div style="text-align: center;">
-    <span id="가군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
-
-    <h2 style="text-align:center;">나군</h2>
-    <div style="text-align: center;">
-        <span id="나군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-        <span id="나군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-    </div>
-    <div style="display: flex; justify-content: space-around;">
-        <div>
-            <p style="text-align:center;"><strong>수능</strong></p>
-            <p id="나군-수능점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>내신</strong></p>
-            <p id="나군-내신점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="나군-실기점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>총점</strong></p>
-            <p id="나군-총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>합격가능성</strong></p>
-            <p id="나군-합격가능성" style="text-align:center;"></p>
-        </div>
-    </div>
-<div style="text-align: center;">
-    <span id="나군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
-
-    <h2 style="text-align:center;">다군</h2>
-    <div style="text-align: center;">
-        <span id="다군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-        <span id="다군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-    </div>
-    <div style="display: flex; justify-content: space-around;">
-        <div>
-            <p style="text-align:center;"><strong>수능</strong></p>
-            <p id="다군-수능점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>내신</strong></p>
-            <p id="다군-내신점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="다군-실기점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>총점</strong></p>
-            <p id="다군-총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>합격가능성</strong></p>
-            <p id="다군-합격가능성" style="text-align:center;"></p>
-        </div>
-    </div>
-<div style="text-align: center;">
-    <span id="다군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
 </body>
-
-
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PG9VJFXV"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 </html>
